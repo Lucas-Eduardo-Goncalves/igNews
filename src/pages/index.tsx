@@ -1,4 +1,4 @@
-import { GetServerSideProps } from 'next';
+import { GetStaticProps } from 'next';
 import Head from 'next/head';
 
 import { SubscribeButton } from '../components/SubscribeButton';
@@ -38,18 +38,8 @@ export default function Home({ product }: HomeProps) {
   )
 };  
 
-// Criando função server side rendering 
-//  (Só pode ser criada em paginas, não em componentes)
-//  (O nome da função deve ser sempre o mesmo)
-//  (A função deve ser sempre ascincrona "async")
-
-export const getServerSideProps: GetServerSideProps = async () => {
-
-  // Faço a chamada a api do stripe passando o id do preço
-  const price = await stripe.prices.retrieve('price_1KOo3RCWaPdJwNCYi7jLoJbs', {
-    // Utilizo esse "expand: ['product']" para ter acesso a todas as informações do produto
-    expand: ['product']
-  });
+export const getStaticProps: GetStaticProps = async () => {
+  const price = await stripe.prices.retrieve('price_1KOo3RCWaPdJwNCYi7jLoJbs');
 
   const product = {
     priceId: price.id,
@@ -59,10 +49,11 @@ export const getServerSideProps: GetServerSideProps = async () => {
     }).format(price.unit_amount / 100),
   }
 
-  // A pagina tem acesso as props retornadas aqui
   return {
     props: {
       product
-    }
+    },
+    
+    revalidate: 60 * 60 * 24 // 24 hours
   }
 } 
