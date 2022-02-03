@@ -17,7 +17,7 @@ export function SignInButton() {
       >
         <FaGithub color="#84D361"/>
         {data.user.name}
-        <FiX color="#737380"/>
+        <FiX color="#737380" className={styles.FixSvg}/>
       </button>
     ) 
   } else {
